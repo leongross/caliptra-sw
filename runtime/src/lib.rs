@@ -13,6 +13,7 @@ mod invoke_dpe;
 mod stash_measurement;
 mod update;
 mod verify;
+mod pcr;
 
 // Used by runtime tests
 pub mod mailbox;
@@ -27,6 +28,7 @@ use dpe_crypto::DpeCrypto;
 pub use dpe_platform::{DpePlatform, VENDOR_ID, VENDOR_SKU};
 pub use fips::{FipsSelfTestCmd, FipsShutdownCmd, FipsVersionCmd};
 pub use info::{FwInfoCmd, IDevIdCertCmd, IDevIdInfoCmd};
+pub use pcr::IncrementPcrResetCounterCmd;
 pub use invoke_dpe::InvokeDpeCmd;
 pub use stash_measurement::StashMeasurementCmd;
 pub use verify::EcdsaVerifyCmd;
@@ -297,6 +299,7 @@ fn handle_command(drivers: &mut Drivers) -> CaliptraResult<MboxStatusE> {
         CommandId::VERSION => FipsVersionCmd::execute(drivers),
         CommandId::SELF_TEST => FipsSelfTestCmd::execute(drivers),
         CommandId::SHUTDOWN => FipsShutdownCmd::execute(drivers),
+        CommandId::INCREMENT_PCR_RESET_COUNTER => IncrementPcrResetCounterCmd::execute(drivers, cmd_bytes),
         _ => Err(CaliptraError::RUNTIME_UNIMPLEMENTED_COMMAND),
     }?;
 

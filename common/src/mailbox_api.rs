@@ -13,6 +13,7 @@ impl CommandId {
     pub const GET_IDEV_INFO: Self = Self(0x49444549); // IDEI
     pub const GET_LDEV_CERT: Self = Self(0x4C444556); // "LDEV"
     pub const ECDSA384_VERIFY: Self = Self(0x53494756); // "SIGV"
+    pub const INCREMENT_PCR_RESET_COUNTER: Self = Self(0x50435252); // "PCRR"
     pub const STASH_MEASUREMENT: Self = Self(0x4D454153); // "MEAS"
     pub const INVOKE_DPE: Self = Self(0x44504543); // "DPEC"
     pub const DISABLE_ATTESTATION: Self = Self(0x4453424C); // "DSBL"
@@ -348,4 +349,11 @@ pub struct FwInfoResp {
     pub fmc_manifest_svn: u32,
     // TODO: Decide what other information to report for general firmware
     // status.
+}
+
+#[repr(C)]
+#[derive(Debug, AsBytes, FromBytes, PartialEq, Eq)]
+pub struct IncrementPcrResetCounter {
+    pub hdr: MailboxRespHeader,
+    pub index: u32,
 }
