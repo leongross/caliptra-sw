@@ -117,9 +117,9 @@ impl PcrBank {
     pub fn new(pv: PvReg) -> Self {
         Self { pv, log_index: 0 }
     }
-    /// Erase all the pcrs in the pcr vault
+    /// Erase all the PCRs in the PCR vault
     ///
-    /// Note: The pcrs that have "use" lock set will not be erased
+    /// Note: The PCRs that have "use" lock set will not be erased
     pub fn erase_all_pcrs(&mut self) {
         const PCR_IDS: [PcrId; 32] = [
             PcrId::PcrId0,
@@ -164,7 +164,7 @@ impl PcrBank {
         }
     }
 
-    /// Erase specified pcr
+    /// Erase specified PCR
     ///
     /// # Arguments
     ///
