@@ -11,7 +11,7 @@ use caliptra_common::mailbox_api::{
 use caliptra_drivers::{CaliptraError, Ecc384PubKey};
 use caliptra_hw_model::{DefaultHwModel, HwModel, ModelError, ShaAccMode};
 use caliptra_runtime::{FipsVersionCmd, RtBootStatus, DPE_SUPPORT, VENDOR_ID, VENDOR_SKU};
-use common::{run_rom_test, run_rt_test};
+use common::run_rt_test;
 use dpe::{
     commands::{
         CertifyKeyCmd, CertifyKeyFlags, Command, CommandHdr, GetCertificateChainCmd, SignCmd,
@@ -237,6 +237,7 @@ fn test_stash_measurement() {
         hdr: MailboxReqHeader { chksum: 0 },
         metadata: [0u8; 4],
         measurement: [0u8; 48],
+        context: [0u8; 48],
         svn: 0,
     };
 
@@ -526,11 +527,10 @@ fn test_disable_attestation_cmd() {
 
 #[test]
 fn test_ecdsa_verify_cmd() {
-    let mut model = run_rom_test("mbox");
+    let mut model = run_rt_test(None, None);
 
     model.step_until(|m| {
-        m.soc_mbox().status().read().mbox_fsm_ps().mbox_idle()
-            && m.soc_ifc().cptra_boot_status().read() == 1
+        m.soc_ifc().cptra_boot_status().read() == RtBootStatus::RtReadyForCommands.into()
     });
 
     // Message to hash
@@ -632,7 +632,7 @@ fn test_ecdsa_verify_cmd() {
 
 #[test]
 fn test_fips_cmd_api() {
-    let mut model = run_rom_test("mbox");
+    let mut model = run_rt_test(None, None);
 
     model.step_until(|m| m.soc_mbox().status().read().mbox_fsm_ps().mbox_idle());
 
@@ -661,28 +661,9 @@ fn test_fips_cmd_api() {
         MailboxRespHeader::FIPS_STATUS_APPROVED
     );
     assert_eq!(fips_version.mode, FipsVersionCmd::MODE);
-    assert_eq!(fips_version.fips_rev, [0x01, 0x00, 0x00]);
+    assert_eq!(fips_version.fips_rev, [0x01, 0xaaaaaaaa, 0xbbbbbbbb]);
     let name = &fips_version.name[..];
     assert_eq!(name, FipsVersionCmd::NAME.as_bytes());
-
-    // SELF_TEST
-    let payload = MailboxReqHeader {
-        chksum: caliptra_common::checksum::calc_checksum(u32::from(CommandId::SELF_TEST), &[]),
-    };
-
-    let resp = model
-        .mailbox_execute(u32::from(CommandId::SELF_TEST), payload.as_bytes())
-        .unwrap()
-        .unwrap();
-
-    let resp = MailboxRespHeader::read_from(resp.as_slice()).unwrap();
-    // Verify checksum and FIPS status
-    assert!(caliptra_common::checksum::verify_checksum(
-        resp.chksum,
-        0x0,
-        &resp.as_bytes()[core::mem::size_of_val(&resp.chksum)..],
-    ));
-    assert_eq!(resp.fips_status, MailboxRespHeader::FIPS_STATUS_APPROVED);
 
     // SHUTDOWN
     let payload = MailboxReqHeader {
@@ -705,7 +686,7 @@ fn test_fips_cmd_api() {
 /// register is cleared.
 #[test]
 fn test_error_cleared() {
-    let mut model = run_rom_test("mbox");
+    let mut model = run_rt_test(None, None);
 
     model.step_until(|m| m.soc_mbox().status().read().mbox_fsm_ps().mbox_idle());
 
@@ -744,7 +725,7 @@ fn test_fw_version() {
 
 #[test]
 fn test_unimplemented_cmds() {
-    let mut model = run_rom_test("mbox");
+    let mut model = run_rt_test(None, None);
 
     model.step_until(|m| m.soc_mbox().status().read().mbox_fsm_ps().mbox_idle());
 

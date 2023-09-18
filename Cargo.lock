@@ -257,6 +257,7 @@ dependencies = [
  "caliptra-registers",
  "caliptra-test",
  "cfg-if 1.0.0",
+ "dpe",
  "openssl",
  "ufmt",
  "ureg",
@@ -380,9 +381,11 @@ dependencies = [
  "caliptra-hw-model",
  "caliptra-image-types",
  "caliptra-registers",
+ "caliptra-test",
  "caliptra-x509",
  "caliptra_common",
  "cfg-if 1.0.0",
+ "openssl",
  "ufmt",
  "zerocopy",
 ]
@@ -398,6 +401,7 @@ dependencies = [
  "caliptra_common",
  "cfg-if 1.0.0",
  "ufmt",
+ "ureg",
  "zerocopy",
 ]
 
@@ -422,6 +426,7 @@ dependencies = [
  "caliptra-registers",
  "caliptra-test-harness-types",
  "caliptra-verilated",
+ "caliptra_common",
  "libc",
  "nix 0.26.2",
  "rand",
@@ -559,6 +564,7 @@ version = "0.1.0"
 dependencies = [
  "caliptra-drivers",
  "caliptra-lms-types",
+ "ufmt",
  "zerocopy",
 ]
 
@@ -596,6 +602,7 @@ dependencies = [
  "caliptra-kat",
  "caliptra-lms-types",
  "caliptra-registers",
+ "caliptra-test",
  "caliptra-x509",
  "caliptra_common",
  "cfg-if 1.0.0",
@@ -648,6 +655,7 @@ dependencies = [
  "caliptra-image-openssl",
  "caliptra-image-serde",
  "caliptra-image-types",
+ "caliptra-image-verify",
  "caliptra-kat",
  "caliptra-registers",
  "caliptra-x509",
@@ -702,9 +710,6 @@ dependencies = [
  "caliptra-runtime",
  "caliptra_common",
  "openssl",
- "p384",
- "rfc6979",
- "sha2",
  "zerocopy",
 ]
 
@@ -747,6 +752,7 @@ dependencies = [
  "bitflags 2.4.0",
  "caliptra-drivers",
  "caliptra-image-types",
+ "caliptra-image-verify",
  "caliptra-registers",
  "ufmt",
  "zerocopy",

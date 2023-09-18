@@ -28,7 +28,9 @@ impl CommandId {
     /// The status command.
     pub const VERSION: Self = Self(0x4650_5652); // "FPVR"
     /// The self-test command.
-    pub const SELF_TEST: Self = Self(0x4650_4C54); // "FPST"
+    pub const SELF_TEST_START: Self = Self(0x4650_4C54); // "FPST"
+    /// The self-test get results.
+    pub const SELF_TEST_GET_RESULTS: Self = Self(0x4650_4C67); // "FPGR"
     /// The shutdown command.
     pub const SHUTDOWN: Self = Self(0x4650_5344); // "FPSD"
 
@@ -62,6 +64,7 @@ pub enum MailboxResp {
     TestGetFmcAliasCert(TestGetFmcAliasCertResp),
     FipsVersion(FipsVersionResp),
     FwInfo(FwInfoResp),
+    Capabilities(CapabilitiesResp),
 }
 
 impl MailboxResp {
@@ -77,6 +80,7 @@ impl MailboxResp {
             MailboxResp::TestGetFmcAliasCert(resp) => resp.as_bytes(),
             MailboxResp::FipsVersion(resp) => resp.as_bytes(),
             MailboxResp::FwInfo(resp) => resp.as_bytes(),
+            MailboxResp::Capabilities(resp) => resp.as_bytes(),
         }
     }
 
@@ -92,6 +96,7 @@ impl MailboxResp {
             MailboxResp::TestGetFmcAliasCert(resp) => resp.as_bytes_mut(),
             MailboxResp::FipsVersion(resp) => resp.as_bytes_mut(),
             MailboxResp::FwInfo(resp) => resp.as_bytes_mut(),
+            MailboxResp::Capabilities(resp) => resp.as_bytes_mut(),
         }
     }
 
@@ -240,7 +245,19 @@ pub struct StashMeasurementReq {
     pub hdr: MailboxReqHeader,
     pub metadata: [u8; 4],
     pub measurement: [u8; 48],
+    pub context: [u8; 48],
     pub svn: u32,
+}
+impl Default for StashMeasurementReq {
+    fn default() -> Self {
+        Self {
+            hdr: Default::default(),
+            metadata: Default::default(),
+            measurement: [0u8; 48],
+            context: [0u8; 48],
+            svn: Default::default(),
+        }
+    }
 }
 
 #[repr(C)]
@@ -363,4 +380,13 @@ pub struct FwInfoResp {
     pub fmc_manifest_svn: u32,
     // TODO: Decide what other information to report for general firmware
     // status.
+}
+
+// CAPABILITIES
+// No command-specific input args
+#[repr(C)]
+#[derive(Debug, AsBytes, FromBytes, PartialEq, Eq)]
+pub struct CapabilitiesResp {
+    pub hdr: MailboxRespHeader,
+    pub capabilities: [u8; crate::capabilities::Capabilities::SIZE_IN_BYTES],
 }
