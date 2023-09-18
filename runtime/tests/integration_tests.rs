@@ -832,7 +832,7 @@ fn test_idev_id_cert() {
 fn test_extend_pcr_cmd() {
     let mut model = run_rt_test(None, None);
 
-    let payload_data = [0u8; 80];
+    let payload_data = [0u8; 79];
 
     let cmd = ExtendPcrReq {
         hdr: MailboxReqHeader { chksum: 0 },

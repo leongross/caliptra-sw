@@ -123,7 +123,7 @@ impl Default for MailboxResp {
 
 // HEADER
 #[repr(C)]
-#[derive(Default, Debug, AsBytes, FromBytes, PartialEq, Eq)]
+#[derive(Default, Debug, AsBytes, FromBytes, PartialEq, Eq, Clone, Copy)]
 pub struct MailboxReqHeader {
     pub chksum: i32,
 }
@@ -278,7 +278,7 @@ impl Default for InvokeDpeReq {
 }
 
 // EXTEND_PCR
-#[repr(C)]
+#[repr(packed)]
 #[derive(Debug, AsBytes, FromBytes, PartialEq, Eq)]
 pub struct ExtendPcrReq {
     pub hdr: MailboxReqHeader,
@@ -288,7 +288,7 @@ pub struct ExtendPcrReq {
 }
 // No command-specific output args
 impl ExtendPcrReq {
-    pub const DATA_MAX_SIZE: usize = sha384::SHA384_BLOCK_BYTE_SIZE - sha384::SHA384_HASH_SIZE;
+    pub const DATA_MAX_SIZE: usize = sha384::SHA384_BLOCK_BYTE_SIZE - sha384::SHA384_HASH_SIZE - 1;
 }
 
 #[repr(C)]
