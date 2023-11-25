@@ -126,6 +126,8 @@ impl CaliptraError {
     pub const DRIVER_MAILBOX_INVALID_STATE: CaliptraError = CaliptraError::new_const(0x00080001);
     pub const DRIVER_MAILBOX_INVALID_DATA_LEN: CaliptraError = CaliptraError::new_const(0x00080002);
     pub const DRIVER_MAILBOX_ENQUEUE_ERR: CaliptraError = CaliptraError::new_const(0x00080004);
+    pub const DRIVER_MAILBOX_UNCORRECTABLE_ECC: CaliptraError =
+        CaliptraError::new_const(0x00080005);
 
     /// SHA384ACC Errors.
     pub const DRIVER_SHA384ACC_INDEX_OUT_OF_BOUNDS: CaliptraError =
@@ -354,6 +356,8 @@ impl CaliptraError {
     pub const RUNTIME_GLOBAL_WDT_EXPIRED: CaliptraError = CaliptraError::new_const(0x000E001F);
     pub const RUNTIME_IDEV_CERT_POPULATION_FAILED: CaliptraError =
         CaliptraError::new_const(0x000E0021);
+    pub const RUNTIME_ADD_ROM_MEASUREMENTS_TO_DPE_FAILED: CaliptraError =
+        CaliptraError::new_const(0x000E0022);
 
     /// FMC Errors
     pub const FMC_GLOBAL_NMI: CaliptraError = CaliptraError::new_const(0x000F0001);
@@ -474,7 +478,7 @@ impl CaliptraError {
     pub const ROM_GLOBAL_WDT_EXPIRED: CaliptraError = CaliptraError::new_const(0x0105000C);
 
     pub const ROM_GLOBAL_MEASUREMENT_LOG_EXHAUSTED: CaliptraError =
-        CaliptraError::new_const(0x010000D);
+        CaliptraError::new_const(0x0105000D);
 
     /// ROM KAT Errors
     pub const ROM_KAT_SHA256_DIGEST_FAILURE: CaliptraError = CaliptraError::new_const(0x90010001);

@@ -5,6 +5,16 @@
 
 use crate::FwId;
 
+pub fn rom_from_env() -> &'static FwId<'static> {
+    match std::env::var("CPTRA_ROM_TYPE").as_ref().map(|s| s.as_str()) {
+        Ok("ROM") => &ROM,
+        Ok("ROM_WITHOUT_UART") => &ROM,
+        Ok("ROM_WITH_UART") => &ROM_WITH_UART,
+        Ok(s) => panic!("unexpected CPRTA_TEST_ROM env-var value: {s:?}"),
+        Err(_) => &ROM_WITH_UART,
+    }
+}
+
 pub const ROM: FwId = FwId {
     crate_name: "caliptra-rom",
     bin_name: "caliptra-rom",
@@ -102,6 +112,11 @@ pub mod hw_model_tests {
 
     pub const TEST_DCCM_DOUBLE_BIT_ECC: FwId = FwId {
         bin_name: "test_dccm_double_bit_ecc",
+        ..BASE_FWID
+    };
+
+    pub const TEST_UNITIALIZED_READ: FwId = FwId {
+        bin_name: "test_uninitialized_read",
         ..BASE_FWID
     };
 
@@ -353,6 +368,7 @@ pub const REGISTERED_FW: &[&FwId] = &[
     &hw_model_tests::TEST_WRITE_TO_ROM,
     &hw_model_tests::TEST_ICCM_DOUBLE_BIT_ECC,
     &hw_model_tests::TEST_DCCM_DOUBLE_BIT_ECC,
+    &hw_model_tests::TEST_UNITIALIZED_READ,
     &hw_model_tests::TEST_PCR_EXTEND,
     &driver_tests::DOE,
     &driver_tests::ECC384,

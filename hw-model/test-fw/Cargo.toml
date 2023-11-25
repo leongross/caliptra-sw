@@ -15,6 +15,7 @@ caliptra-drivers.workspace = true
 caliptra-registers.workspace = true
 caliptra-test-harness.workspace = true
 caliptra-cfi-lib = { workspace = true, default-features = false, features = ["cfi", "cfi-counter" ] }
+ufmt.workspace = true
 
 [[bin]]
 name = "test_iccm_unaligned_write"
@@ -61,6 +62,11 @@ required-features = ["riscv"]
 [[bin]]
 name = "test_dccm_double_bit_ecc"
 path = "test_dccm_double_bit_ecc.rs"
+required-features = ["riscv"]
+
+[[bin]]
+name = "test_uninitialized_read"
+path = "test_uninitialized_read.rs"
 required-features = ["riscv"]
 
 [[bin]]
