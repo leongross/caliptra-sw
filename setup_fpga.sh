@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
+#
+# Licensed under the Apache-2.0 license.
+#
 
 set -e
 
 CALIPTRA_ROOT=$(pwd)
 
 function usage() {
-    echo " usage: $0 [binfile]"
+    echo "usage: $0 [binfile]"
 }
 
 function disable_cpu_idle() {
