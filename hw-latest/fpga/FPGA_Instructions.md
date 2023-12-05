@@ -115,7 +115,7 @@ Serial port settings for connection over USB.
 1. Execute test targeting fpga_realtime
     - `CPTRA_UIO_NUM=4 cargo test -p caliptra-test --features=fpga_realtime smoke_test`
 
-There also a script [setup_fpga.sh](../../setup_fpga.sh) that carries out all the above configurations.
+There also a script [setup_fpga.sh] that carries out all the above configurations.
 
 ### JTAG debug [Doc WIP]
 JTAG support has been enabled using OpenOCD. The security state debug_locked parameter must be FALSE for JTAG to be accessible.

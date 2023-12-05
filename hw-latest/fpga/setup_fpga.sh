@@ -5,7 +5,7 @@
 
 set -e
 
-CALIPTRA_ROOT=$(pwd)
+CALIPTRA_ROOT=$(realpath $(dirname "$( readlink -f -- "$0"; )")/../../)
 
 function usage() {
     echo "usage: $0 [binfile]"
@@ -28,32 +28,39 @@ function disable_cpu_idle() {
 }
 
 function reduce_fan_speed() {
-    echo 321 >/sys/class/gpio/export
-    echo out >/sys/class/gpio/gpio321/direction
+    if [ ! -d /sys/class/gpio/gpio321 ]
+    then
+        echo 321 >/sys/class/gpio/export
+        echo out >/sys/class/gpio/gpio321/direction
+    fi
 }
 
 function build_and_install_kernel_modules() {
     # rom_backdoor.ko
-    cd "$CALIPTRA_ROOT"/hw-latest/fpga/rom_backdoor || exit 2
-    make
+    if ! lsmod | grep -wq rom_backdoor; then
+        cd "$CALIPTRA_ROOT/hw-latest/fpga/rom_backdoor" || exit 2
+        make
 
-    if [[ -f "$CALIPTRA_ROOT/hw-latest/fpga/rom_backdoor/rom_backdoor.ko" ]]; then
-        insmod "$CALIPTRA_ROOT/hw-latest/fpga/rom_backdoor/rom_backdoor.ko"
-    else
-        echo "[-] error inserting rom bakdoor. module not found"
-        exit 2
+        if [[ -f "$CALIPTRA_ROOT/hw-latest/fpga/rom_backdoor/rom_backdoor.ko" ]]; then
+            insmod "$CALIPTRA_ROOT/hw-latest/fpga/rom_backdoor/rom_backdoor.ko"
+        else
+            echo "[-] error inserting rom backdoor. module not found"
+            exit 2
+        fi
     fi
 
     # io_module.ko
-    cd "$CALIPTRA_ROOT"/hw-latest/fpga/io_module || exit 2
-    make
+    if ! lsmod | grep -wq io_module; then
+        cd "$CALIPTRA_ROOT/hw-latest/fpga/io_module" || exit 2
+        make
 
-    if [[ -f "$CALIPTRA_ROOT/hw-latest/fpga/io_module/io_module.ko" ]]; then
-        insmod "$CALIPTRA_ROOT/hw-latest/fpga/io_module/io_module.ko"
-        chmod 666 /dev/uio4
-    else
-        echo "[-] error inserting io module. module not found"
-        exit 2
+        if [[ -f "$CALIPTRA_ROOT/hw-latest/fpga/io_module/io_module.ko" ]]; then
+            insmod "$CALIPTRA_ROOT/hw-latest/fpga/io_module/io_module.ko"
+            chmod 666 /dev/uio4
+        else
+            echo "[-] error inserting io module. module not found"
+            exit 2
+        fi
     fi
 }
 
