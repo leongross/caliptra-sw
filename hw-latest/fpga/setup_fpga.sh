@@ -12,7 +12,7 @@ function usage() {
 }
 
 function disable_cpu_idle() {
-    for i in $(seq 1 3); do
+    for i in $(seq 0 3); do
         cpu_sysfs=/sys/devices/system/cpu/cpu"$i"/cpuidle/state1/disable
         echo 1 >"$cpu_sysfs"
         echo "    |- cpu[$i]"
