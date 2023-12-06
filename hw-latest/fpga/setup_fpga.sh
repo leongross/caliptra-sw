@@ -5,7 +5,7 @@
 
 set -e
 
-CALIPTRA_ROOT=$(realpath $(dirname "$( readlink -f -- "$0"; )")/../../)
+CALIPTRA_ROOT=$(realpath "$(dirname "$( readlink -f -- "$0"; )")"/../../)
 
 function usage() {
     echo "usage: $0 [binfile]"
@@ -28,7 +28,7 @@ function disable_cpu_idle() {
 }
 
 function reduce_fan_speed() {
-    if [ ! -d /sys/class/gpio/gpio321 ]
+    if [[ ! -d /sys/class/gpio/gpio321 ]]
     then
         echo 321 >/sys/class/gpio/export
         echo out >/sys/class/gpio/gpio321/direction
@@ -37,7 +37,8 @@ function reduce_fan_speed() {
 
 function build_and_install_kernel_modules() {
     # rom_backdoor.ko
-    if ! lsmod | grep -wq rom_backdoor; then
+    if ! lsmod | grep -wq "rom_backdoor"
+    then
         cd "$CALIPTRA_ROOT/hw-latest/fpga/rom_backdoor" || exit 2
         make
 
@@ -50,7 +51,8 @@ function build_and_install_kernel_modules() {
     fi
 
     # io_module.ko
-    if ! lsmod | grep -wq io_module; then
+    if ! lsmod | grep -wq "io_module"
+    then
         cd "$CALIPTRA_ROOT/hw-latest/fpga/io_module" || exit 2
         make
 
