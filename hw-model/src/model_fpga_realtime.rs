@@ -141,6 +141,9 @@ pub struct ModelFpgaRealtime {
 }
 
 impl ModelFpgaRealtime {
+    const SOC_IFC_ADDR: u32 = 0x3003_0000;
+    const SOC_MBOX_ADDR: u32 = 0x3002_0000;
+
     fn realtime_thread_itrng_fn(
         wrapper: *mut u32,
         exit: Arc<AtomicBool>,
@@ -384,8 +387,6 @@ unsafe impl Send for SendPtr {}
 
 impl SocManager for ModelFpgaRealtime {
     const MAX_WAIT_CYCLES: u32 = 20_000_000;
-    const SOC_IFC_ADDR: u32 = 0x3003_0000;
-    const SOC_MBOX_ADDR: u32 = 0x3002_0000;
 
     type TMmio<'a> = BusMmio<FpgaRealtimeBus<'a>>;
 
@@ -400,7 +401,16 @@ impl SocManager for ModelFpgaRealtime {
     fn log_mailbox(&mut self, args: core::fmt::Arguments<'_>) {
         writeln!(self.output().logger(), "{args}").unwrap()
     }
+
+    fn soc_ifc_addr(&self) -> u32 {
+        ModelFpgaRealtime::SOC_IFC_ADDR
+    }
+
+    fn soc_mbox_addr(&self) -> u32 {
+        ModelFpgaRealtime::SOC_MBOX_ADDR
+    }
 }
+
 impl HwModel for ModelFpgaRealtime {
     type TBus<'a> = FpgaRealtimeBus<'a>;
 

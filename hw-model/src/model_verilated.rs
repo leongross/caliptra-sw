@@ -107,12 +107,13 @@ impl ModelVerilated {
     pub fn corrupt_mailbox_ecc_double_bit(&mut self) {
         self.v.corrupt_mailbox_ecc_double_bit();
     }
+
+    const SOC_IFC_ADDR: u32 = 0x3003_0000;
+    const SOC_MBOX_ADDR: u32 = 0x3002_0000;
 }
 
 impl SocManager for ModelVerilated {
     const MAX_WAIT_CYCLES: u32 = 20_000_000;
-    const SOC_IFC_ADDR: u32 = 0x3003_0000;
-    const SOC_MBOX_ADDR: u32 = 0x3002_0000;
 
     type TMmio<'a> = BusMmio<VerilatedAxiBus<'a>>;
 
@@ -127,8 +128,6 @@ impl SocManager for ModelVerilated {
     fn log_mailbox(&mut self, args: core::fmt::Arguments<'_>) {
         writeln!(self.output().logger(), "{args}").unwrap()
     }
-
-    const MAX_WAIT_CYCLES: u32 = 20_000_000;
 }
 
 impl HwModel for ModelVerilated {

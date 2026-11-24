@@ -2776,6 +2776,9 @@ pub struct FpgaRealtimeBus<'a> {
 }
 
 impl FpgaRealtimeBus<'_> {
+    const SOC_IFC_ADDR: u32 = 0x3003_0000;
+    const SOC_MBOX_ADDR: u32 = 0x3002_0000;
+
     pub fn new(mmio: *mut u32) -> Self {
         Self {
             mmio,
@@ -2819,8 +2822,6 @@ impl Bus for FpgaRealtimeBus<'_> {
 
 impl SocManager for ModelFpgaSubsystem {
     const MAX_WAIT_CYCLES: u32 = 20_000_000;
-    const SOC_IFC_ADDR: u32 = 0x3003_0000;
-    const SOC_MBOX_ADDR: u32 = 0x3002_0000;
 
     type TMmio<'a>
         = BusMmio<FpgaRealtimeBus<'a>>
@@ -2837,6 +2838,14 @@ impl SocManager for ModelFpgaSubsystem {
 
     fn log_mailbox(&mut self, args: core::fmt::Arguments<'_>) {
         writeln!(self.output().logger(), "{args}").unwrap()
+    }
+
+    fn soc_ifc_addr(&self) -> u32 {
+        Self::SOC_IFC_ADDR
+    }
+
+    fn soc_mbox_addr(&self) -> u32 {
+        Self::SOC_MBOX_ADDR
     }
 }
 
