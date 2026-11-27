@@ -1941,6 +1941,16 @@ impl Commands {
             _ => 48,
         };
         let raw_key = &shared_key_out.as_bytes()[..key_len];
+
+        // The shared secret shall be used only by an approved key-derivation
+        // method (as specified in NIST.SP.800-56C) and shall not be used for any
+        // other purpose.
+        //
+        // See 5.8 Key-Derivation Methods for Key-Agreement Schemes, NIST.SP.800-56Ar3.
+        let info: &[u8] = &[0x00];
+        let tag = Self::hkdf_expand384(drivers, &raw_key[..48], info)?;
+        let tag = tag.as_bytes();
+
         let mut unencrypted_cmk = UnencryptedCmk {
             version: 1,
             length: key_len as u16,
@@ -1953,7 +1963,7 @@ impl Commands {
             usage_counter: 0,
             key_material: [0u8; CMK_MAX_KEY_SIZE_BITS / 8],
         };
-        unencrypted_cmk.key_material[..key_len].copy_from_slice(raw_key);
+        unencrypted_cmk.key_material[..key_len].copy_from_slice(&tag[..key_len]);
 
         let encrypted_cmk = drivers.cryptographic_mailbox.encrypt_cmk(
             &mut drivers.aes,
